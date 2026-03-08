@@ -21,33 +21,14 @@ CostsGBPTable  <- readRDS("Data/CostsGBPRDS.rds")
 MostSeen        <- ArtistCount[1, 1][[1]]
 mostseennumber  <- ArtistCount[1, 2][[1]]
 
-ArtistReactable <- reactable(
-  ArtistCount,
-  pagination = TRUE,
-  defaultPageSize = 50,
-  searchable = TRUE,
-  details = function(index) {
-    Artist_data <- ArtistSubset[ArtistSubset$Artist == ArtistCount$Artist[index], ]
-    htmltools::div(reactable(
-      Artist_data,
-      outlined = TRUE,
-      compact = TRUE,
-      columns = list(
-        Price   = colDef(align = "center", width = 70, format = colFormat(currency = "GBP")),
-        Artist  = colDef(show = FALSE),
-        Venue   = colDef(align = "center"),
-        Location= colDef(align = "center"),
-        Date    = colDef(align = "center", width = 60),
-        Year    = colDef(align = "center", width = 40),
-        With    = colDef(align = "center")
-      ),
-      striped = TRUE
-    ))
-  }
-)
+uniqueartist <- MasterRDS %>%
+  distinct(Artist, .keep_all = TRUE) %>%
+  nrow()
+
+
 
 TopArtist <- ArtistCount %>%
-  slice_head(n = 15) %>%
+  slice_head(n = 20) %>%
   arrange(`Number of gigs`, desc(Artist))
 
 TopArtist$Artist <- factor(TopArtist$Artist, levels = TopArtist$Artist)
@@ -57,15 +38,10 @@ ArtistPlot <- ggplot(TopArtist, aes(reorder(Artist, `Number of gigs`, sum), `Num
   coord_flip() +
   xlab("") + ylab("Number of gigs") +
   geom_text(aes(label = `Number of gigs`), hjust = 1.1, color = "white", size = 4.5, fontface = "bold") +
-  scale_y_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30), limits = c(0, 31), expand = expansion(mult = c(0, 0))) +
-  theme(
-    axis.text.y = element_text(hjust = 1, size = 12, face = "bold", family = "Arial"),
-    axis.text.x = element_text(size = 12, face = "bold", family = "Arial"),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title.x = element_text(face = "bold", family = "Arial"),
-    axis.line = element_line(colour = "black", linewidth = 0.5, linetype = 1, lineend = "butt")
-  )
+  scale_y_continuous(breaks = seq(0, ((ceiling(max(TopArtist$`Number of gigs`)/ 5) * 5)+1), by = 5),
+                     limits = c(0, (ceiling(max(TopArtist$`Number of gigs`)/ 5) * 5)+1),
+                     expand = expansion(mult = c(0, 0))) +
+  gig_stats_ggplot_theme
 
 # -------------------- City workings ----------------
 mostcity       <- CityCount[1, 1][[1]]
@@ -77,25 +53,31 @@ uniquecity <- CityCount %>%
 
 CityReactable <- reactable(
   CityCount,
-  pagination = TRUE,
-  defaultPageSize = 50,
-  searchable = TRUE,
+  pagination = FALSE,
+  searchable = FALSE,
+  striped = TRUE,
+  compact = TRUE,
+  defaultColDef = colDef(
+    style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.1")),
   details = function(index) {
     location_data <- CitySubset[CitySubset$Location == CityCount$Location[index], ]
     htmltools::div(reactable(
       location_data,
       outlined = TRUE, pagination = FALSE, compact = TRUE,
       columns = list(
-        Price    = colDef(align = "center", width = 70, format = colFormat(currency = "GBP")),
-        Artist   = colDef(align = "center"),
-        Venue    = colDef(align = "center"),
+        Price    = colDef(vAlign = "center",align = "center", width = 70, format = colFormat(currency = "GBP")),
+        Artist   = colDef(vAlign = "center",align = "center"),
+        Venue    = colDef(vAlign = "center",align = "center"),
         Location = colDef(show = FALSE),
-        Date     = colDef(align = "center", width = 60),
-        Year     = colDef(align = "center", width = 40),
-        With     = colDef(align = "center")
-      ),
-      striped = TRUE
-    ))
+        Date     = colDef(vAlign = "center",align = "center", width = 80),
+        Year     = colDef(vAlign = "center",align = "center", width = 80),
+        With     = colDef(vAlign = "center",align = "center")),
+        defaultColDef = colDef(
+          style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+          headerStyle = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"))
+      )
+    )
   }
 )
 
@@ -109,26 +91,25 @@ CityPlot <- ggplot(TopCity, aes(reorder(Location, `Number of gigs`, sum), `Numbe
   geom_col(fill = "#605ca8") +
   coord_flip() +
   xlab("") + ylab("Number of gigs") +
-  scale_y_continuous(breaks = c(0, 25, 50, 75, 100, 125, 150, 175, 200), limits = c(0, 210), expand = expansion(mult = c(0, 0))) +
+  scale_y_continuous(breaks = seq(0, ((ceiling(max(TopCity$`Number of gigs`)/ 50) * 50)+1), by = 50),
+                     limits = c(0, (ceiling(max(TopCity$`Number of gigs`)/ 50) * 50)+10),
+                     expand = expansion(mult = c(0, 0))) +
   geom_text(aes(label = `Number of gigs`), hjust = 1.1, color = "white", size = 4.5, fontface = "bold") +
-  theme(
-    axis.text.y = element_text(hjust = 1, size = 12, face = "bold", family = "Arial"),
-    axis.text.x = element_text(size = 12, face = "bold", family = "Arial"),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title.x = element_text(face = "bold", family = "Arial"),
-    axis.line = element_line(colour = "black", linewidth = 0.5, linetype = 1, lineend = "butt")
-  )
+  gig_stats_ggplot_theme
 
 
 CityMap <- ggplot() +
-  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="grey", alpha=0.3) +
+  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="#FFFFFF") +
   geom_point(data=CityLongLat, aes(x=Long, y=Lat, alpha=n)) +
   
   geom_point(data=CityLongLat, aes(x=Long, y=Lat, size = n*2), color="#605ca8") +
   scale_size_continuous(range=c(0,6)) +
   theme_void() + ylim(50,59) + coord_map() +
-  theme(plot.title = element_text(color="black", size=32, hjust = 0.5, face="bold", family="Arial"),legend.position="none")
+  theme(plot.title = element_text(color="black", size=32, hjust = 0.5, face="bold", family="Arial"),
+        legend.position="none",
+        plot.background  = element_rect(fill = "#2A2F3A", color = NA),
+        panel.background = element_rect(fill = "#2A2F3A", color = NA)
+  )
 
 
 # -------------------- Venue workings ---------------
@@ -145,6 +126,9 @@ VenueReactable <- reactable(
   defaultPageSize = 50,
   searchable = TRUE,
   columns = list(Location = colDef(align = "center")),
+  defaultColDef = colDef(
+    style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.1")),
   details = function(index) {
     Venue_data <- VenueSubset[VenueSubset$Venue == VenueCount$Venue[index], ]
     htmltools::div(reactable(
@@ -173,16 +157,11 @@ VenuePlot <- ggplot(TopVenue, aes(reorder(Venue, `Number of gigs`, sum), `Number
   geom_col(fill = "#605ca8") +
   coord_flip() +
   xlab("") + ylab("Number of gigs") +
-  scale_y_continuous(breaks = c(0, 5, 10, 15, 20, 25, 30, 35, 40), limits = c(0, 41), expand = expansion(mult = c(0, 0))) +
+  scale_y_continuous(breaks = seq(0, ((ceiling(max(TopVenue$`Number of gigs`)/ 5) * 5)+1), by = 5),
+                     limits = c(0, (ceiling(max(TopVenue$`Number of gigs`)/ 5) * 5)+1),
+                     expand = expansion(mult = c(0, 0))) +
   geom_text(aes(label = `Number of gigs`), hjust = 1.1, color = "white", size = 4.5, fontface = "bold", family = "Arial") +
-  theme(
-    axis.text.y = element_text(hjust = 1, size = 12, face = "bold", family = "Arial"),
-    axis.text.x = element_text(size = 12, face = "bold", family = "Arial"),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title.x = element_text(face = "bold", family = "Arial"),
-    axis.line = element_line(colour = "black", linewidth = 0.5, linetype = 1, lineend = "butt")
-  )
+  gig_stats_ggplot_theme
 
 # -------------------- Friends workings -------------
 mostfriend       <- FriendsCount[1, 1][[1]]
@@ -192,6 +171,9 @@ solo             <- FriendsCount[2, 2][[1]]
 FriendsReactable <- reactable(
   FriendsCount,
   pagination = FALSE,
+  defaultColDef = colDef(
+    style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.1")),
   details = function(index) {
     Friend_data <- FriendsSubset[FriendsSubset$Friend == FriendsCount$Friend[index], ]
     htmltools::div(reactable(
@@ -220,16 +202,11 @@ FriendsPlot <- ggplot(TopFriends, aes(reorder(Friend, `Number of gigs`, sum), `N
   geom_col(fill = "#605ca8") +
   coord_flip() +
   xlab("") + ylab("Number of gigs") +
-  scale_y_continuous(breaks = c(0, 50, 100, 150, 200, 250, 300, 350), limits = c(0, 355), expand = expansion(mult = c(0, 0))) +
+  scale_y_continuous(breaks = seq(0, ((ceiling(max(TopFriends$`Number of gigs`)/ 50) * 50)+10), by = 50),
+                     limits = c(0, (ceiling(max(TopFriends$`Number of gigs`)/ 50) * 50)+10),
+                     expand = expansion(mult = c(0, 0))) +
   geom_text(aes(label = `Number of gigs`), hjust = 1.1, color = "white", size = 4.5, fontface = "bold", family = "Arial") +
-  theme(
-    axis.text.y = element_text(hjust = 1, size = 12, face = "bold", family = "Arial"),
-    axis.text.x = element_text(size = 12, face = "bold", family = "Arial"),
-    panel.background = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title.x = element_text(face = "bold"),
-    axis.line = element_line(colour = "black", linewidth = 0.5, linetype = 1, lineend = "butt")
-  )
+  gig_stats_ggplot_theme
 
 # -------------------- Costs workings ----------------
 CostReactable <- reactable(
@@ -294,3 +271,36 @@ YearGigs <- nrow(year)
 FutureTableCurrent <- FutureRDS %>% dplyr::filter(Year == format(Sys.Date(), "%Y"))
 FutureTotal <- suppressWarnings(max(FutureTableCurrent$Gig, na.rm = TRUE))
 CurrentYearTotal <- YearGigs + ifelse(is.infinite(FutureTotal), 0, FutureTotal)
+
+longest_time <- MasterRDS %>% select(Artist,Date,Year) %>% 
+  group_by(Artist) %>%
+  filter(n() > 1) %>%
+  ungroup() %>% 
+  mutate(full_date = as.Date(paste(Date, Year), format = "%d-%b %Y")) %>% 
+  select(Artist,full_date) %>%
+  arrange(Artist, full_date) %>%
+  group_by(Artist) %>%
+  mutate(
+    `First Date` = lag(full_date),
+    gap_days  = as.integer(full_date - `First Date`)
+  ) %>%
+  filter(!is.na(gap_days)) %>%
+  slice_max(gap_days, n = 1, with_ties = FALSE) %>%
+  transmute(
+    Artist,
+    `First Date`,
+    `Second Date` = full_date,
+    `Gap in Days` = gap_days
+  ) %>%
+  ungroup() %>% 
+  arrange(desc(`Gap in Days`))
+
+
+longesttime_artist <- longest_time$Artist[1:3]
+longesttime_time <- round(longest_time$`Gap in Days`[1:3]/365,1)
+
+
+
+  
+
+

@@ -60,8 +60,11 @@ saveRDS(FutureRDS, file = "Data/FutureRDS.rds")
 
 # Artist workings -----------------------
 
-    ArtistSubset <- Master %>% 
-      select(-VHL, -1, -Notes, -W, -HL, -Gig, -Img) 
+
+ArtistSubset <- Master %>%
+  filter(Artist %in% names(which(table(Artist) >= 2))) %>%
+  select(-VHL, -1, -Notes, -W, -HL, -Gig, -Img)
+
 
     saveRDS(ArtistSubset, file = "Data/ArtistSubsetRDS.rds")
 
@@ -73,8 +76,7 @@ saveRDS(FutureRDS, file = "Data/FutureRDS.rds")
       select(Artist, n)
     
     ArtistRDS <- Artist %>% 
-      rename("Number of gigs" = n) %>% 
-      slice_head(n=150)
+      rename("Number of gigs" = n) 
     
     saveRDS(ArtistRDS, file = "Data/ArtistCountRDS.rds")
     

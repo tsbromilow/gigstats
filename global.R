@@ -27,10 +27,6 @@ source("theme.R")
 
 # -------------------- UI (bslib + navbar) ----------
 
-
-
-
-
 ui <- page_navbar(
   title = "Tom's Gig Statistics",
   theme = app_theme,
