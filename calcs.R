@@ -16,6 +16,8 @@ LastFM         <- readRDS("Data/lastfmRDS.rds")
 LastFMPercents <- readRDS("Data/lastfmpercentsRDS.rds")
 CostsTable     <- readRDS("Data/CostsRDS.rds")
 CostsGBPTable  <- readRDS("Data/CostsGBPRDS.rds")
+FurthestLongLat<- readRDS("Data/FurthestLongLatRDS.rds")
+
 
 # -------------------- Artist workings --------------
 MostSeen        <- ArtistCount[1, 1][[1]]
@@ -28,7 +30,7 @@ uniqueartist <- MasterRDS %>%
 
 
 TopArtist <- ArtistCount %>%
-  slice_head(n = 20) %>%
+  slice_head(n = 15) %>%
   arrange(`Number of gigs`, desc(Artist))
 
 TopArtist$Artist <- factor(TopArtist$Artist, levels = TopArtist$Artist)
@@ -52,19 +54,20 @@ uniquecity <- CityCount %>%
   nrow()
 
 CityReactable <- reactable(
-  CityCount,
+  CityCount, height = 600,
   pagination = FALSE,
-  searchable = FALSE,
+  searchable = TRUE,
   striped = TRUE,
   compact = TRUE,
   defaultColDef = colDef(
-    style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
-    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.1")),
+    style       = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.2")
+  ),
   details = function(index) {
     location_data <- CitySubset[CitySubset$Location == CityCount$Location[index], ]
     htmltools::div(reactable(
       location_data,
-      outlined = TRUE, pagination = FALSE, compact = TRUE,
+      outlined = FALSE, pagination = FALSE, compact = TRUE, bordered = FALSE,
       columns = list(
         Price    = colDef(vAlign = "center",align = "center", width = 70, format = colFormat(currency = "GBP")),
         Artist   = colDef(vAlign = "center",align = "center"),
@@ -94,15 +97,15 @@ CityPlot <- ggplot(TopCity, aes(reorder(Location, `Number of gigs`, sum), `Numbe
   scale_y_continuous(breaks = seq(0, ((ceiling(max(TopCity$`Number of gigs`)/ 50) * 50)+1), by = 50),
                      limits = c(0, (ceiling(max(TopCity$`Number of gigs`)/ 50) * 50)+10),
                      expand = expansion(mult = c(0, 0))) +
-  geom_text(aes(label = `Number of gigs`), hjust = 1.1, color = "white", size = 4.5, fontface = "bold") +
+  geom_text(aes(label = `Number of gigs`), hjust = 1.1, color = "#ffffff", size = 4.5, fontface = "bold") +
   gig_stats_ggplot_theme
 
 
 CityMap <- ggplot() +
-  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="#FFFFFF") +
+  geom_polygon(data = UK, aes(x=long, y = lat, group = group), fill="#c0c0c0") +
   geom_point(data=CityLongLat, aes(x=Long, y=Lat, alpha=n)) +
   
-  geom_point(data=CityLongLat, aes(x=Long, y=Lat, size = n*2), color="#605ca8") +
+  geom_point(data=CityLongLat, aes(x=Long, y=Lat, size = n*2), color="#a0dee8") +
   scale_size_continuous(range=c(0,6)) +
   theme_void() + ylim(50,59) + coord_map() +
   theme(plot.title = element_text(color="black", size=32, hjust = 0.5, face="bold", family="Arial"),
@@ -110,6 +113,9 @@ CityMap <- ggplot() +
         plot.background  = element_rect(fill = "#2A2F3A", color = NA),
         panel.background = element_rect(fill = "#2A2F3A", color = NA)
   )
+
+furthest_city <- FurthestLongLat$Location[1]
+furthest_distance <- round(FurthestLongLat$dist_km[1],0)
 
 
 # -------------------- Venue workings ---------------
@@ -120,30 +126,42 @@ uniquevenue <- VenueCount %>%
   distinct(Venue, .keep_all = TRUE) %>%
   nrow()
 
+venue_by_city <- VenueCount %>% 
+  group_by(Location) %>% 
+  count(Location) %>% 
+  arrange(desc(n))
+
+venue_most_city <- venue_by_city$Location[1]
+venue_most_number <- venue_by_city$n[1]
+
+
 VenueReactable <- reactable(
-  VenueCount,
-  pagination = TRUE,
+  VenueCount, height = 600,
+  pagination = FALSE,
   defaultPageSize = 50,
+  compact = TRUE,
   searchable = TRUE,
   columns = list(Location = colDef(align = "center")),
   defaultColDef = colDef(
     style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
-    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.1")),
+    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.2")),
   details = function(index) {
     Venue_data <- VenueSubset[VenueSubset$Venue == VenueCount$Venue[index], ]
     htmltools::div(reactable(
       Venue_data,
-      outlined = TRUE, pagination = FALSE, compact = TRUE,
+      outlined = FALSE, pagination = FALSE, compact = TRUE,   bordered = FALSE,
+      striped = TRUE,
       columns = list(
-        Price    = colDef(align = "center", width = 70, format = colFormat(currency = "GBP")),
         Venue    = colDef(show = FALSE),
         Location = colDef(show = FALSE),
-        Date     = colDef(align = "center", width = 60),
-        Year     = colDef(align = "center", width = 40),
-        With     = colDef(align = "center")
-      ),
-      striped = TRUE
-    ))
+        Date     = colDef(align = "center"),
+        Year     = colDef(align = "center"),
+        With     = colDef(align = "center")),
+        defaultColDef = colDef(
+          style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+          headerStyle = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"))
+      )
+    )
   }
 )
 
@@ -167,27 +185,32 @@ VenuePlot <- ggplot(TopVenue, aes(reorder(Venue, `Number of gigs`, sum), `Number
 mostfriend       <- FriendsCount[1, 1][[1]]
 mostfriendnumber <- FriendsCount[1, 2][[1]]
 solo             <- FriendsCount[2, 2][[1]]
+uniquefriend <- nrow(FriendsCount)
 
 FriendsReactable <- reactable(
-  FriendsCount,
+  FriendsCount,  height = 600,
   pagination = FALSE,
+  searchable = TRUE,
+  compact = TRUE,
   defaultColDef = colDef(
     style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
-    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.1")),
+    headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.2")),
   details = function(index) {
     Friend_data <- FriendsSubset[FriendsSubset$Friend == FriendsCount$Friend[index], ]
     htmltools::div(reactable(
       Friend_data,
-      outlined = TRUE, pagination = FALSE, compact = TRUE,
+      outlined = FALSE, pagination = FALSE, compact = TRUE,   bordered = FALSE,
+      striped = TRUE,
       columns = list(
-        Price   = colDef(align = "center", width = 70, format = colFormat(currency = "GBP")),
         Venue   = colDef(align = "center"),
         Location= colDef(align = "center"),
-        Date    = colDef(align = "center", width = 60),
-        Year    = colDef(align = "center", width = 40),
+        Date    = colDef(align = "center"),
+        Year    = colDef(align = "center"),
         Friend  = colDef(show = FALSE)
       ),
-      striped = TRUE
+      defaultColDef = colDef(
+        style = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+        headerStyle = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"))
     ))
   }
 )
@@ -230,22 +253,35 @@ CostSummary <- CostsTable %>%
   head(-2)
 
 CostPlot <- ggplot(CostSummary, aes(x = Year, y = Price, group = 1)) +
-  geom_hline(aes(yintercept = avplotprice), size = 1.5, linetype = "dashed", alpha = 0.8, color = "#3c8dbc") +
-  geom_line(col = "#605ca8", size = 1, alpha = 0.4, linetype = "dotted") +
-  geom_point(shape = 23, size = 5, col = "#605ca8", fill = "#605ca8") +  # 23 is diamond filled
+  geom_hline(yintercept = avplotprice, size = 1.5, linetype = "dashed",
+             alpha = 1, color = "#ffffff") +
+  geom_line(col = "#c0c0c0", size = 1, alpha = 0.8, linetype = "dotted") +
+  geom_point(shape = 23, size = 8, col = "#605ca8", fill = "#605ca8") +
   ylab("Mean Price Per Year") +
-  annotate("text", label = paste0("Overall mean price (", "\u00A3", avplotprice, ")"), x = 5, y = avplotprice - 1) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 50), labels = function(x) paste0("\u00A3", x)) +
+  annotate(
+    "text",
+    label = paste0("Overall mean price (", "\u00A3", avplotprice, ")"),
+    x = 5, y = avplotprice + 2,
+    colour = "#ffffff", size = 4
+  ) +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 50),
+    labels = function(x) paste0("\u00A3", x)
+  ) +
   theme(
-    axis.text.y = element_text(hjust = 1, size = 12, face = "bold", family = "Arial"),
-    axis.text.x = element_text(size = 12, face = "bold", family = "Arial"),
-    panel.background = element_blank(),
-    axis.title.x = element_text(size = 13, face = "bold", family = "Arial"),
-    axis.title.y = element_text(size = 13, face = "bold", family = "Arial"),
-    axis.line = element_line(colour = "black", linewidth = 0.5, linetype = 1, lineend = "butt"),
+    axis.text.y = element_text(colour = "#a0dee8", hjust = 1, size = 12, face = "bold", family = "Arial"),
+    axis.text.x = element_text(colour = "#a0dee8", size = 12, face = "bold", family = "Arial"),
+    plot.background = element_rect(fill = "#2A2F3A", colour = NA),
+    panel.background = element_rect(fill = "#2A2F3A"),
+    axis.title.x = element_text(colour = "#a0dee8", size = 13, face = "bold", family = "Arial"),
+    axis.title.y = element_text(colour = "#a0dee8", size = 13, face = "bold", family = "Arial"),
+    axis.line = element_line(colour = "#a0dee8", linewidth = 0.5, linetype = 1, lineend = "butt"),
+    panel.grid.major.y = element_line(colour = "#a0dee8", linewidth = 0.5, linetype = 1, lineend = "butt"),
     panel.grid.major.x = element_blank(),
-    panel.grid.major.y = element_line(color = "gray", linewidth = 0.5)
+    panel.grid.minor = element_blank()
   )
+
 
 # -------------------- Setlists ---------------------
 dat <- MasterRDS %>%
@@ -257,7 +293,7 @@ YearReactable <- reactable(
   YearTable,
   pagination = FALSE,
   defaultColDef = colDef(align = "center", minWidth = 60),
-  columns = list("Year" = colDef(align = "left", maxWidth = 40)),
+  columns = list("Year" = colDef(align = "left")),
   striped = TRUE, compact = TRUE
 )
 

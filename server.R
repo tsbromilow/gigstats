@@ -5,14 +5,15 @@ server <- function(input, output, session) {
   
   ArtistReactable <- reactable(
     ArtistCount,  height = 600,
-    pagination = TRUE,
+    pagination = FALSE,
     striped = TRUE,
+    compact = TRUE,
     defaultPageSize = 50,
     searchable = TRUE,
     
     defaultColDef = colDef(
       style       = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
-      headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.1")
+      headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.2")
     ),
     
     details = function(index) {
@@ -25,20 +26,26 @@ server <- function(input, output, session) {
       # If no rows found, show nothing (or return an empty div)
       if (is.null(Artist_data) || nrow(Artist_data) == 0) return(NULL)
       
-      htmltools::div(
+      div(
         reactable(
           Artist_data,
           compact = TRUE,
           striped = TRUE,
+          pagination = FALSE,
           
+          defaultColDef = colDef(
+            style       = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+            headerStyle = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.1")
+          ),
           columns = list(
-            Price    = colDef(align = "center", width = 70, format = colFormat(currency = "GBP")),
+            Price    = colDef(align = "center", minWidth  = 70, format = colFormat(currency = "GBP")),
             Artist   = colDef(show = FALSE),
-            Venue    = colDef(align = "center"),
+            Venue    = colDef(align = "left", minWidth  = 150),
             Location = colDef(align = "center"),
-            Date     = colDef(align = "center", width = 60),
-            Year     = colDef(align = "center", width = 40),
+            Date     = colDef(align = "center", minWidth  = 60),
+            Year     = colDef(align = "center", minWidth  = 60),
             With     = colDef(align = "center")
+            
           )
         )
       )
@@ -64,7 +71,7 @@ server <- function(input, output, session) {
   
   # Costs
   output$coststable  <- renderReactable({ CostReactable })
-  output$costplot    <- renderPlot(CostPlot)
+  output$costplot    <- renderPlot({CostPlot})
   
   # Years
   output$yearstable  <- renderReactable({ YearReactable })
@@ -77,8 +84,11 @@ server <- function(input, output, session) {
       MasterTable,
       rownames = FALSE,
       options = list(
-        lengthMenu = c(10, 50, 100),
-        pageLength = 50,
+        paging = FALSE,
+        info = FALSE,
+        scrollY = "500px",
+        scrollCollapse = TRUE,
+        scrollX = TRUE,
         scrollX = TRUE,
         columnDefs = list(
           list(className = "dt-center", targets = 0:1),
@@ -86,16 +96,25 @@ server <- function(input, output, session) {
           list(className = "dt-center", targets = 3:9)
         )
       )
-    )
+    ) %>%
+      DT::formatStyle(
+        columns   = names(MasterTable),
+        fontSize  = "14px",
+        lineHeight = '1',
+        
+      )
   })
   
   output$futuretable <- DT::renderDataTable({
     DT::datatable(
       FutureRDS,
       rownames = FALSE,
+      
       options = list(
-        lengthMenu = c(10, 50, 100),
-        pageLength = 50,
+        paging = FALSE,
+        info = FALSE,
+        scrollY = "500px",
+        scrollCollapse = TRUE,
         scrollX = TRUE,
         columnDefs = list(
           list(className = "dt-center", targets = 0),
@@ -103,17 +122,27 @@ server <- function(input, output, session) {
           list(className = "dt-center", targets = 2:8)
         )
       )
-    )
+    ) %>%
+      DT::formatStyle(
+        columns   = names(FutureRDS),
+        fontSize  = "14px",
+        lineHeight = '1',
+        
+      )
   })
   
   # Last.fm table
   output$lastfmtable <- renderReactable({
     reactable::reactable(
-      LastFM,
+      LastFM, height = 600,
       pagination = TRUE,
+      defaultColDef = colDef(
+        style       = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
+        headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.2")
+      ),
       columns = list(
         "Rank"      = reactable::colDef(align = "left"),
-        "Artist"    = reactable::colDef(align = "center"),
+        "Artist"    = reactable::colDef(align = "center", minWidth = 300),
         "Seen"      = reactable::colDef(align = "center"),
         "Scrobbles" = reactable::colDef(align = "center")
       ),
@@ -121,13 +150,7 @@ server <- function(input, output, session) {
     )
   })
   
-  # Last.fm KPI tiles (plain text)
-  output$tenbox     <- renderText({ paste0(LastFMPercents$percent[match("t10",  LastFMPercents$top)],  "%") })
-  output$twentybox  <- renderText({ paste0(LastFMPercents$percent[match("t25",  LastFMPercents$top)],  "%") })
-  output$fiftybox   <- renderText({ paste0(LastFMPercents$percent[match("t50",  LastFMPercents$top)],  "%") })
-  output$hunbox     <- renderText({ paste0(LastFMPercents$percent[match("t100", LastFMPercents$top)],  "%") })
-  output$twohunbox  <- renderText({ paste0(LastFMPercents$percent[match("t250", LastFMPercents$top)],  "%") })
-  output$fivehunbox <- renderText({ paste0(LastFMPercents$percent[match("t500", LastFMPercents$top)],  "%") })
+
   
   # Setlists
   
@@ -138,9 +161,18 @@ server <- function(input, output, session) {
       selection = list(mode = "single", target = "row", selected = 1),
       rownames = FALSE,
       options = list(
+        paging = FALSE,
+        info = FALSE,
+        scrollY = "500px",
+        scrollCollapse = TRUE,
+          columnDefs = list(
+            list(className = "dt-left",   targets = c(0)),  # e.g. first two columns
+            list(className = "dt-center", targets = c(1:4)),
+            list(visible = FALSE, targets = 5)
+          ),
         autowidth  = TRUE,
-        pageLength = 15,
-        lengthMenu = c(15, 25, 50),
+
+        
         initComplete = DT::JS("
         function(settings, json) {
           var $cont = $(this.api().table().container());
@@ -167,8 +199,9 @@ server <- function(input, output, session) {
     ) %>%
       DT::formatStyle(
         columns   = names(dat),
-        fontSize  = '80%',
-        lineHeight = '1'
+        fontSize  = "14px",
+        lineHeight = '1',
+
       )
   })
   
@@ -180,7 +213,7 @@ server <- function(input, output, session) {
     req(nrow(df()) > 0)
     imgfr <- lapply(df()$Img, function(file) {
       tags$div(
-        tags$img(src = file, width = "100%", height = "100%"),
+        tags$img(src = file, width = "85%", height = "85%"),
         tags$script(src = "titlescript.js")
       )
     })

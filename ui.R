@@ -19,8 +19,8 @@ ui <- page_navbar(
             title = "Total gigs",
             value = TotalGigs,
             theme = value_box_theme(
-              bg = "#03c7e8",
-              fg = "#ffffff"
+              bg = "#a0dee8",
+              fg = "#2A2F3A"
             )
           ),
           value_box(
@@ -36,7 +36,7 @@ ui <- page_navbar(
             value = paste0(YearGigs, " of ", CurrentYearTotal),
             theme = value_box_theme(
               bg = "#c0c0c0",
-              fg = "#0F1115"
+              fg = "#2A2F3A"
             )
           )
         ),
@@ -48,8 +48,8 @@ ui <- page_navbar(
             title = "Most common city",
             value = paste0(mostcity, " - ", mostcitynumber, " gigs"),
             theme = value_box_theme(
-              bg = "#03c7e8",
-              fg = "#ffffff"
+              bg = "#a0dee8",
+              fg = "#2A2F3A"
             )
           ),
           value_box(
@@ -70,15 +70,15 @@ ui <- page_navbar(
             value = paste0("The Brudenell - ", mostvenuenumber, " gigs"),
             theme = value_box_theme(
               bg = "#c0c0c0",
-              fg = "#0F1115"
+              fg = "#2A2F3A"
             )
           ),
           value_box(
             title = "Unique venues",
             value = uniquevenue,
             theme = value_box_theme(
-              bg = "#03c7e8",
-              fg = "#ffffff"
+              bg = "#a0dee8",
+              fg = "#2A2F3A"
             )
           )
         ),
@@ -99,15 +99,15 @@ ui <- page_navbar(
             value = solo,
             theme = value_box_theme(
               bg = "#c0c0c0",
-              fg = "#0F1115"
+              fg = "#2A2F3A"
             )
           ),
           value_box(
             title = "Average ticket price",
             value = paste0("\u00A3", avprice, " per gig"),
             theme = value_box_theme(
-              bg = "#03c7e8",
-              fg = "#ffffff"
+              bg = "#a0dee8",
+              fg = "#2A2F3A"
             )
           )
         )
@@ -116,7 +116,14 @@ ui <- page_navbar(
       # ---------- RIGHT COLUMN: Map only (no blank spacer) ----------
       div(
         card(
-          card_header("Location map by number of gigs (UK and Ireland)"),
+          
+          card_header(
+            div(
+              style = "width: 100%; text-align: center; font-weight: 700;",
+              "Location map by number of gigs (UK and Ireland)"
+            )
+          )
+          ,
           card_body(
             style = "overflow-x: auto;",
             plotOutput("citymapplot", height = "320px")
@@ -134,7 +141,6 @@ ui <- page_navbar(
       col_widths = c(6, 6),
       style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
       
-      # LEFT column
       div(
         style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
         
@@ -143,7 +149,7 @@ ui <- page_navbar(
           value_box(
             title = "Most seen artist",
             value = MostSeen,
-            theme = value_box_theme(bg = "#03c7e8", fg = "#ffffff")
+            theme = value_box_theme(bg = "#a0dee8", fg = "#2A2F3A")
           ),
           value_box(
             title = "Unique artists",
@@ -157,26 +163,24 @@ ui <- page_navbar(
               HTML(
                 paste0("Longest time gaps in seeing an artist"))),
             value = tags$div(
-              style = "font-size: 16px; line-height: 1.2; text-align: center;font-weight:700",
+              style = "font-size: 16px; line-height: 1.1; text-align: center;font-weight:700",
               HTML(
                 paste0(
                   #seq_along(longesttime_artist), ". ",
                   longesttime_artist, " (", longesttime_time, " years)",
                   collapse = "<br>"))),
-            theme = value_box_theme(bg = "#c0c0c0", fg = "#0F1115")
+            theme = value_box_theme(bg = "#c0c0c0", fg = "#2A2F3A")
           )
           
           
         ),
         
-        # PLOT: grow to fill remaining height up to bottom of the table
         div(
           style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
           plotOutput("artistplot", height = "100%")
         )
       ),
       
-      # RIGHT column (make sure this defines a height)
       div(
         style = "height: 100%;",
         reactableOutput("artisttable")
@@ -187,123 +191,283 @@ ui <- page_navbar(
   # ---------------- Locations ----------------
   nav_panel(
     tagList(icon("map-marker"), "Locations"),
-    tagList(layout_columns(
+    layout_columns(
       col_widths = c(6, 6),
-      card(
-        card_header("Locations"),
-        card_body(
-          plotOutput("cityplot")
+      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      
+      div(
+        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        
+        layout_columns(
+          col_widths = c(3, 3, 6), height = 80,
+          value_box(
+            title = "Most common city",
+            value = paste0(mostcity),
+            theme = value_box_theme(bg = "#a0dee8", fg = "#2A2F3A")
+          ),
+          value_box(
+            title = "Unique cities",
+            value = uniquecity,
+            theme = value_box_theme(bg = "#605ca8", fg = "#ffffff")
+          ),
+          
+          value_box(
+            title = "Furthest place from home",
+            value = paste(furthest_city,"-",format(furthest_distance, big.mark = ",", trim = TRUE),"km"),
+            theme = value_box_theme(bg = "#c0c0c0", fg = "#2A2F3A")
+          )
+          
+          
+        ),
+        
+        div(
+          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          plotOutput("cityplot", height = "100%")
         )
       ),
-      card(
-        card_body(reactableOutput("citytable"))
-      ))
-    )
-  ),
+      
+      div(
+        style = "height: 100%;",
+        reactableOutput("citytable")
+      )
+    )),
   
   # ---------------- Venues ----------------
   nav_panel(
     tagList(icon("building"), "Venues"),
-    tagList(layout_columns(
+    layout_columns(
       col_widths = c(6, 6),
-      card(
-        card_header("Venues"),
-        card_body(
-          plotOutput("venueplot")
+      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      
+      div(
+        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        
+        layout_columns(
+          col_widths = c(4, 3, 5), height = 80,
+          value_box(
+            title = "Most common venue",
+            value = "The Brudenell",
+            theme = value_box_theme(bg = "#a0dee8", fg = "#2A2F3A")),
+ 
+          value_box(
+            title = "Unique venues",
+            value = uniquevenue,
+            theme = value_box_theme(bg = "#605ca8", fg = "#ffffff")
+          ),
+          
+          value_box(
+            title = "Most venues in one city",
+            value = paste(venue_most_city,"-",venue_most_number," venues"),
+            theme = value_box_theme(bg = "#c0c0c0", fg = "#2A2F3A")
+          )
+          
+          
+        ),
+        
+        div(
+          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          plotOutput("venueplot", height = "100%")
         )
       ),
-      card(
-        card_body(reactableOutput("venuetable"))
+      
+      div(
+        style = "height: 100%;",
+        reactableOutput("venuetable")
       )
-    ))
-  ),
+    )),
   
   # ---------------- Friends ----------------
   nav_panel(
     tagList(icon("user"), "Friends"),
-    tagList(layout_columns(
+    layout_columns(
       col_widths = c(6, 6),
-      card(
-        card_header("Friends"),
-        card_body(
-          plotOutput("friendplot")
-        )
-      ),
-      card(
-        card_body(reactableOutput("friendtable"))
+      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      
+      div(
+        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        
+        layout_columns(
+          col_widths = c(4, 4, 4), height = 80,
+          value_box(
+            title = "Best friend",
+            value = mostfriend,
+            theme = value_box_theme(bg = "#a0dee8", fg = "#2A2F3A")
+          ),
+          value_box(
+            title = "Different people",
+            value = uniquefriend,
+            theme = value_box_theme(bg = "#605ca8", fg = "#ffffff")
+          ),
+          
+          value_box(
+            title = "Solo gigs",
+            value = solo,
+            theme = value_box_theme(
+              bg = "#c0c0c0",
+              fg = "#2A2F3A"
+            ))
+          
+        ),
+        
+        div(
+          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          plotOutput("friendplot", height = "100%")
+        ))
+      ,
+      
+      div(
+        style = "height: 100%;",
+        reactableOutput("friendtable")
       )
-    ))
-  ),
+    )),
   
   # ---------------- Setlists ----------------
   nav_panel(
     tagList(icon("list-alt"), "Setlists"),
     layout_columns(
-      col_widths = c(3, 9),
-      card(
-        card_header("Setlists (click on a row to see setlist)"),
-        card_body(uiOutput("img"))
+      col_widths = c(4, 8),
+      
+      div(
+        div(
+          style = "
+          text-align: left;
+          font-weight: 700;
+          color: #a0dee8;
+          margin-bottom: 10px;
+          font-size: 14px;
+        ",
+          "Click on a table row to view that setlist"
+        ),
+        uiOutput("img")
       ),
-      card(
-        card_body(DT::DTOutput("table"))
-      )
+      
+      DTOutput("table")
     )
   ),
   
   # ---------------- Costs ----------------
   nav_panel(
     tagList(icon("pound-sign"), "Costs"),
-    tagList(layout_columns(
+    layout_columns(
       col_widths = c(6, 6),
-      card(
-        card_header("Costs"),
-        card_body(
-          plotOutput("costplot")
+      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      
+      div(
+        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        
+        layout_columns(
+          col_widths = c(4, 3, 5), height = 80,
+          value_box(
+            title = "Most common venue",
+            value = "The Brudenell",
+            theme = value_box_theme(bg = "#a0dee8", fg = "#2A2F3A")),
+          
+          value_box(
+            title = "Unique venues",
+            value = uniquevenue,
+            theme = value_box_theme(bg = "#605ca8", fg = "#ffffff")
+          ),
+          
+          value_box(
+            title = "Most venues in one city",
+            value = paste(venue_most_city,"-",venue_most_number," venues"),
+            theme = value_box_theme(bg = "#c0c0c0", fg = "#2A2F3A")
+          )
+          
+          
+        ),
+        
+        div(
+          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          plotOutput("costplot", height = "90%")
         )
       ),
-      card(
-        card_body(reactableOutput("coststable"))
+      
+      div(
+        style = "height: 100%;",
+        reactableOutput("coststable")
       )
-    ))
-  ),
+    )),
   
   # ---------------- Years ----------------
   nav_panel(
     tagList(icon("calendar"), "Years"),
-    card(
-      card_header("Stats by Year"),
-      card_body(reactableOutput("yearstable"))
-    )
+reactableOutput("yearstable")
+    
   ),
   
   # ---------------- Master table ----------------
   nav_panel(
     tagList(icon("table"), "Master table"),
-    card(card_body(DT::dataTableOutput("mastertable")))
+    dataTableOutput("mastertable")
   ),
   
   # ---------------- Future gigs ----------------
   nav_panel(
     tagList(icon("forward"), "Future gigs"),
-    card(card_body(DT::dataTableOutput("futuretable")))
+    dataTableOutput("futuretable")
   ),
   
   # ---------------- Last.fm ranking ----------------
   nav_panel(
     tagList(icon("headphones"), "Last.fm ranking"),
-    tagList(
-      layout_columns(
-        value_box(title = "Top 10",   value = textOutput("tenbox"),     theme_color = "primary"),
-        value_box(title = "Top 20",   value = textOutput("twentybox"),  theme_color = "primary"),
-        value_box(title = "Top 50",   value = textOutput("fiftybox"),   theme_color = "primary")
+    layout_columns(
+      col_widths = c(6, 6),
+      div(reactableOutput("lastfmtable")),
+      div(
+      layout_columns(height = 80,
+        col_widths = c(4,4,4), 
+                               value_box(
+                                 title = "of my top 10 most listened to",
+                                 value = paste0("Seen ",LastFMPercents$percent[match("t10",  LastFMPercents$top)],  "%"),
+                                 theme = value_box_theme(
+                                   bg = "#a0dee8",
+                                   fg = "#2A2F3A"
+                                 )
+                               ),
+                               value_box(
+                                 title = "of my top 20 most listened to",
+                                 value = paste0("Seen ",LastFMPercents$percent[match("t20",  LastFMPercents$top)],  "%"),
+                                 theme = value_box_theme(
+                                   bg = "#605ca8",
+                                   fg = "#ffffff"
+                                 )
+                               ),
+                               value_box(
+                                 title = "of my top 50 most listened to",
+                                 value = paste0("Seen ",LastFMPercents$percent[match("t50",  LastFMPercents$top)],  "%"),
+                                 theme = value_box_theme(
+                                   bg = "#c0c0c0",
+                                   fg = "#2A2F3A"
+                                 ))
       ),
-      layout_columns(
-        value_box(title = "Top 100",  value = textOutput("hunbox"),     theme_color = "secondary"),
-        value_box(title = "Top 200",  value = textOutput("twohunbox"),  theme_color = "secondary"),
-        value_box(title = "Top 500",  value = textOutput("fivehunbox"), theme_color = "secondary")
-      ),
-      card(
-        card_body(reactableOutput("lastfmtable"))
+      layout_columns(height = 80,
+                     col_widths = c(4,4,4), 
+                     value_box(
+                       title = "of my top 100 most listened to",
+                       value = paste0("Seen ",LastFMPercents$percent[match("t100",  LastFMPercents$top)],  "%"),
+                       theme = value_box_theme(
+                         bg = "#a0dee8",
+                         fg = "#2A2F3A"
+                       )
+                     ),
+                     value_box(
+                       title = "of my top 250 most listened to",
+                       value = paste0("Seen ",LastFMPercents$percent[match("t250",  LastFMPercents$top)],  "%"),
+                       theme = value_box_theme(
+                         bg = "#605ca8",
+                         fg = "#ffffff"
+                       )
+                     ),
+                     value_box(
+                       title = "of my top 500 most listened to",
+                       value = paste0("Seen ",LastFMPercents$percent[match("t500",  LastFMPercents$top)],  "%"),
+                       theme = value_box_theme(
+                         bg = "#c0c0c0",
+                         fg = "#2A2F3A"
+                       )
+                     )
+      )
       )
     )
   )

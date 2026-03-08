@@ -63,7 +63,7 @@ saveRDS(FutureRDS, file = "Data/FutureRDS.rds")
 
 ArtistSubset <- Master %>%
   filter(Artist %in% names(which(table(Artist) >= 2))) %>%
-  select(-VHL, -1, -Notes, -W, -HL, -Gig, -Img)
+  select(-VHL, -1, -Notes, -W, -HL, -Gig, -Img, -Setlist)
 
 
     saveRDS(ArtistSubset, file = "Data/ArtistSubsetRDS.rds")
@@ -83,7 +83,7 @@ ArtistSubset <- Master %>%
 # City workings -----------------------
     
     CitySubset <- Master %>% 
-      select(-VHL, -1, -Notes, -W, -Gig, -Img, -Setlist) %>%
+      select(-VHL, -1, -Notes, -W, -Gig, -Img, -Setlist, -Price) %>%
       subset(HL == 1) %>% 
       select(-HL) 
     
@@ -121,6 +121,29 @@ ArtistSubset <- Master %>%
       inner_join(UKLongLat)
     
     saveRDS(CityLongLat, file = "Data/CityLongLatRDS.rds")
+    
+    
+    LatLong <- read_csv("cities.csv", show_col_types = FALSE)
+    home <- LatLong %>% filter(Location == "Home") %>% slice(1)
+    
+    haversine_km <- function(lat1, lon1, lat2, lon2) {
+      R <- 6371  # km
+      to_rad <- pi / 180
+      dlat <- (lat2 - lat1) * to_rad
+      dlon <- (lon2 - lon1) * to_rad
+      a <- sin(dlat/2)^2 + cos(lat1*to_rad) * cos(lat2*to_rad) * sin(dlon/2)^2
+      2 * R * asin(pmin(1, sqrt(a)))
+    }
+    
+    furthest <- LatLong %>%
+      filter(Location != "Home") %>%
+      mutate(dist_km = haversine_km(Lat, Long, home$Lat, home$Long)) %>%
+      arrange(desc(dist_km)) %>%
+      slice(1)
+    
+    saveRDS(furthest, file = "Data/FurthestLongLatRDS.rds")
+    
+    
 
     
     #Venue workings
@@ -140,7 +163,7 @@ ArtistSubset <- Master %>%
       mutate(Venue = ifelse(Venue == "The Cluny 2", "The Cluny",Venue ))
     
     VenueSubset <- Master.venue %>% 
-      select(-HL, -1, -Notes, -W, -Gig, -Img, -Setlist) %>% 
+      select(-HL, -1, -Notes, -W, -Gig, -Img, -Setlist, -Price) %>% 
       subset(VHL == 1) %>% 
       select(-VHL) 
     
@@ -173,7 +196,7 @@ ArtistSubset <- Master %>%
     # Friends workings -------------------------------------
     
     FriendsSubset <- Master %>% 
-      select(-VHL, -1, -Notes, -W, -Gig, -Img, -Setlist) %>% 
+      select(-VHL, -1, -Notes, -W, -Gig, -Img, -Setlist, -Price) %>% 
       rename(Friend = With) %>% 
       separate_rows(Friend, sep = ", ", convert = FALSE) %>% 
       subset(HL == 1) %>% 
@@ -315,14 +338,14 @@ ArtistSubset <- Master %>%
     }
     
     t10 <- lastfmstats(10)
-    t25 <- lastfmstats(25)
+    t20 <- lastfmstats(20)
     t50 <- lastfmstats(50)
     t100 <- lastfmstats(100)
     t250 <- lastfmstats(250)
     t500 <- lastfmstats(500)
     
-    lastfmpercents <- tibble(top = c("t10","t25","t50","t100","t250","t500"), 
-                             percent = c(t10[1,1],t25[1,1],t50[1,1],t100[1,1],t250[1,1],t500[1,1]))
+    lastfmpercents <- tibble(top = c("t10","t20","t50","t100","t250","t500"), 
+                             percent = c(t10[1,1],t20[1,1],t50[1,1],t100[1,1],t250[1,1],t500[1,1]))
     
     saveRDS(lastfmpercents, file = "Data/lastfmpercentsRDS.rds") 
     LastFMPercents <- readRDS("Data/lastfmpercentsRDS.rds")
