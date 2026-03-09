@@ -157,6 +157,8 @@ div.dataTables_filter input {
 }
 div.dataTables_filter label { font-size: 12px !important; }
 
+
+
 /* Mobile: don't force the reactable iframe/container to be tall */
 @media (max-width: 768px) {
   /* Make the table container shorter so the plot has room */
@@ -165,6 +167,8 @@ div.dataTables_filter label { font-size: 12px !important; }
   #citytable .ReactTable {
     height: 500px !important;   /* try 320–420px */
   }
+  
+  
 
   /* Give the plot a sensible minimum height */
   #cityplot {

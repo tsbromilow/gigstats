@@ -1,6 +1,5 @@
 server <- function(input, output, session) {
   
-  # Pre-split once (do this once after ArtistSubset is created/loaded)
   ArtistSubset_split <- split(ArtistSubset, ArtistSubset$Artist)
   
   ArtistReactable <- reactable(

@@ -1,22 +1,22 @@
 UK <- map_data("world") %>% dplyr::filter(region == "UK" | region == "Ireland")
 
-MasterRDS      <- readRDS("Data/MasterRDS.rds")
-FutureRDS      <- readRDS("Data/FutureRDS.rds")
-ArtistCount    <- readRDS("Data/ArtistCountRDS.rds")
-ArtistSubset   <- readRDS("Data/ArtistSubsetRDS.rds")
-CityCount      <- readRDS("Data/CityCountRDS.rds")
-CitySubset     <- readRDS("Data/CitySubsetRDS.rds")
-VenueCount     <- readRDS("Data/VenueCountRDS.rds")
-VenueSubset    <- readRDS("Data/VenueSubsetRDS.rds")
-FriendsCount   <- readRDS("Data/FriendsCountRDS.rds")
-FriendsSubset  <- readRDS("Data/FriendsSubsetRDS.rds")
-CityLongLat    <- readRDS("Data/CityLongLatRDS.rds")
-YearTable      <- readRDS("Data/YearTableRDS.rds")
-LastFM         <- readRDS("Data/lastfmRDS.rds")
-LastFMPercents <- readRDS("Data/lastfmpercentsRDS.rds")
-CostsTable     <- readRDS("Data/CostsRDS.rds")
-CostsGBPTable  <- readRDS("Data/CostsGBPRDS.rds")
-FurthestLongLat<- readRDS("Data/FurthestLongLatRDS.rds")
+MasterRDS      <- readRDS("data/MasterRDS.rds")
+FutureRDS      <- readRDS("data/FutureRDS.rds")
+ArtistCount    <- readRDS("data/ArtistCountRDS.rds")
+ArtistSubset   <- readRDS("data/ArtistSubsetRDS.rds")
+CityCount      <- readRDS("data/CityCountRDS.rds")
+CitySubset     <- readRDS("data/CitySubsetRDS.rds")
+VenueCount     <- readRDS("data/VenueCountRDS.rds")
+VenueSubset    <- readRDS("data/VenueSubsetRDS.rds")
+FriendsCount   <- readRDS("data/FriendsCountRDS.rds")
+FriendsSubset  <- readRDS("data/FriendsSubsetRDS.rds")
+CityLongLat    <- readRDS("data/CityLongLatRDS.rds")
+YearTable      <- readRDS("data/YearTableRDS.rds")
+LastFM         <- readRDS("data/lastfmRDS.rds")
+LastFMPercents <- readRDS("data/lastfmpercentsRDS.rds")
+CostsTable     <- readRDS("data/CostsRDS.rds")
+CostsGBPTable  <- readRDS("data/CostsGBPRDS.rds")
+FurthestLongLat<- readRDS("data/FurthestLongLatRDS.rds")
 
 
 # -------------------- Artist workings --------------
@@ -247,6 +247,12 @@ avprice     <- round(mean(MasterRDS$Price, na.rm = TRUE), 2)
 NewMasterRDS <- MasterRDS %>% filter(Year >= 2015)
 avplotprice <- round(mean(NewMasterRDS$Price, na.rm = TRUE), 2)
 
+max_price <- MasterRDS %>% arrange(desc(Price)) %>% slice(1)
+max_price_name <- max_price$Artist
+max_price_money <- max_price$Price
+
+free_gigs <- MasterRDS %>% filter(Price == 0) %>% nrow()
+
 CostSummary <- CostsTable %>%
   select(-"Number of gigs") %>%
   slice(-c(1)) %>%
@@ -332,10 +338,13 @@ longest_time <- MasterRDS %>% select(Artist,Date,Year) %>%
   arrange(desc(`Gap in Days`))
 
 
-longesttime_artist <- longest_time$Artist[1:3]
-longesttime_time <- round(longest_time$`Gap in Days`[1:3]/365,1)
+longesttime_artist <- longest_time$Artist[1]
+longesttime_time <- round(longest_time$`Gap in Days`[1]/365,1)
 
-
+not_seen <- LastFM %>% filter(Seen == "No") %>% head(20) %>% select(Artist) %>% pull()
+not_seen_1 <- not_seen[1:10]
+not_seen_2 <- not_seen[11:20]
+planned <- LastFM %>% filter(Seen == "Planned") %>% select(Artist) %>% pull()
 
   
 

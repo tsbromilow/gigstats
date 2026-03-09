@@ -52,11 +52,11 @@ LatLong <- read.csv(file = 'cities.csv',encoding = "UTF-8-BOM")
 MasterRDS <- Master %>% select(-HL, -VHL, -W) %>% 
   mutate(With = replace(With, With == "Katrina, Ollie Bass, Florian, Henry, Dad, Lucy, Mum, Richard, Morag, Sam Harper, Lewis Sallows, Alex Daines", "Everyone!"))
 
-saveRDS(MasterRDS, file = "Data/MasterRDS.rds")
+saveRDS(MasterRDS, file = "data/MasterRDS.rds")
 
 FutureRDS <- Future  %>% select(-HL, -VHL, -W, -Img, -Setlist) 
 
-saveRDS(FutureRDS, file = "Data/FutureRDS.rds")
+saveRDS(FutureRDS, file = "data/FutureRDS.rds")
 
 # Artist workings -----------------------
 
@@ -66,7 +66,7 @@ ArtistSubset <- Master %>%
   select(-VHL, -1, -Notes, -W, -HL, -Gig, -Img, -Setlist)
 
 
-    saveRDS(ArtistSubset, file = "Data/ArtistSubsetRDS.rds")
+    saveRDS(ArtistSubset, file = "data/ArtistSubsetRDS.rds")
 
     
     Artist <- ArtistSubset %>%
@@ -78,7 +78,7 @@ ArtistSubset <- Master %>%
     ArtistRDS <- Artist %>% 
       rename("Number of gigs" = n) 
     
-    saveRDS(ArtistRDS, file = "Data/ArtistCountRDS.rds")
+    saveRDS(ArtistRDS, file = "data/ArtistCountRDS.rds")
     
 # City workings -----------------------
     
@@ -87,7 +87,7 @@ ArtistSubset <- Master %>%
       subset(HL == 1) %>% 
       select(-HL) 
     
-    saveRDS(CitySubset, file = "Data/CitySubsetRDS.rds")
+    saveRDS(CitySubset, file = "data/CitySubsetRDS.rds")
     
     CityCount <- CitySubset %>%
       count(Location) %>% 
@@ -96,7 +96,7 @@ ArtistSubset <- Master %>%
       select(Location, n) %>% 
       rename("Number of gigs" = n)
     
-    saveRDS(CityCount, file = "Data/CityCountRDS.rds")
+    saveRDS(CityCount, file = "data/CityCountRDS.rds")
     
     
 
@@ -120,7 +120,7 @@ ArtistSubset <- Master %>%
     CityLongLat <- CityLeeds %>% 
       inner_join(UKLongLat)
     
-    saveRDS(CityLongLat, file = "Data/CityLongLatRDS.rds")
+    saveRDS(CityLongLat, file = "data/CityLongLatRDS.rds")
     
     
     LatLong <- read_csv("cities.csv", show_col_types = FALSE)
@@ -141,7 +141,7 @@ ArtistSubset <- Master %>%
       arrange(desc(dist_km)) %>%
       slice(1)
     
-    saveRDS(furthest, file = "Data/FurthestLongLatRDS.rds")
+    saveRDS(furthest, file = "data/FurthestLongLatRDS.rds")
     
     
 
@@ -167,7 +167,7 @@ ArtistSubset <- Master %>%
       subset(VHL == 1) %>% 
       select(-VHL) 
     
-    saveRDS(VenueSubset, file = "Data/VenueSubsetRDS.rds")
+    saveRDS(VenueSubset, file = "data/VenueSubsetRDS.rds")
     
     VenueCount <- VenueSubset %>%
       count(Venue) %>% 
@@ -185,7 +185,7 @@ ArtistSubset <- Master %>%
       right_join(Venue.city) %>% 
       relocate("Number of gigs", .after = last_col())
     
-    saveRDS(VenueCount, file = "Data/VenueCountRDS.rds")
+    saveRDS(VenueCount, file = "data/VenueCountRDS.rds")
 
 
     
@@ -202,7 +202,7 @@ ArtistSubset <- Master %>%
       subset(HL == 1) %>% 
       select(-HL) 
     
-    saveRDS(FriendsSubset, file = "Data/FriendsSubsetRDS.rds")
+    saveRDS(FriendsSubset, file = "data/FriendsSubsetRDS.rds")
     
     FriendsCount <- Master %>%
       subset(W == 1) %>% 
@@ -215,7 +215,7 @@ ArtistSubset <- Master %>%
       mutate(n = as.integer(n)) %>% 
       rename("Number of gigs" = n) 
     
-    saveRDS(FriendsCount, file = "Data/FriendsCountRDS.rds")
+    saveRDS(FriendsCount, file = "data/FriendsCountRDS.rds")
     
     
 
@@ -323,7 +323,7 @@ ArtistSubset <- Master %>%
       mutate(Artist = ifelse(Artist == "tankus", "Tankus",Artist )) %>% 
       mutate(Artist = ifelse(Artist == "Frightened Rabbit", "Frightened Rabbit (Sings the Greys)",Artist ))
   
-    saveRDS(lastfm, file = "Data/lastfmRDS.rds")
+    saveRDS(lastfm, file = "data/lastfmRDS.rds")
     
     lastfmstats <- function(num){
       
@@ -347,8 +347,8 @@ ArtistSubset <- Master %>%
     lastfmpercents <- tibble(top = c("t10","t20","t50","t100","t250","t500"), 
                              percent = c(t10[1,1],t20[1,1],t50[1,1],t100[1,1],t250[1,1],t500[1,1]))
     
-    saveRDS(lastfmpercents, file = "Data/lastfmpercentsRDS.rds") 
-    LastFMPercents <- readRDS("Data/lastfmpercentsRDS.rds")
+    saveRDS(lastfmpercents, file = "data/lastfmpercentsRDS.rds") 
+    LastFMPercents <- readRDS("data/lastfmpercentsRDS.rds")
 
     # Cost workings ------------------
     
@@ -358,34 +358,9 @@ ArtistSubset <- Master %>%
     ExpVen <- cost[1,4]
     ExpPri <- cost[1,8]
     
-    Cost <- Master %>%           # summarise mean and sd
+    Cost <- Master %>%          
       drop_na(Price) %>% 
-      mutate(Year = recode(Year,
-                           `2006` = "2006-14",
-                           `2007` = "2006-14",
-                           `2008` = "2006-14",
-                           `2009` = "2006-14",
-                           `2010` = "2006-14",
-                           `2011` = "2006-14",
-                           `2012` = "2006-14",
-                           `2013` = "2006-14",
-                           `2015` = "2015",
-                           `2016` = "2016",
-                           `2017` = "2017",
-                           `2018` = "2018",
-                           `2019` = "2019",
-                           `2020` = "2020",
-                           `2021` = "2021",
-                           `2022` = "2022",                                     
-                           `2023` = "2023",
-                           `2024` = "2024",
-                           `2025` = "2025",
-                           `2026` = "2026",
-                           `2027` = "2027",
-                           `2028` = "2028",
-                           `2029` = "2029",
-                           `2030` = "2030"
-      )) %>% 
+      mutate(Year = ifelse(Year < 2015, "2006-14", Year)) %>% 
       group_by(Year) %>% 
       summarize("Number of gigs" = n(), Price = round(mean(Price),2)) 
     
@@ -405,14 +380,14 @@ ArtistSubset <- Master %>%
       rbind(Cost.means) %>% 
       rbind(Cost.means.new) 
     
-    saveRDS(Cost.table, file = "Data/CostsRDS.rds")
+    saveRDS(Cost.table, file = "data/CostsRDS.rds")
     
     
     Costs.table.GBP <- Cost.table %>% 
       mutate('Average Price' = paste0(enc2utf8("\u00A3"),Cost.table$Price)) %>% 
       select (-Price)
     
-    saveRDS(Costs.table.GBP, file = "Data/CostsGBPRDS.rds")
+    saveRDS(Costs.table.GBP, file = "data/CostsGBPRDS.rds")
 
     
     CostSummary <- Cost.table %>% 
@@ -502,6 +477,6 @@ ArtistSubset <- Master %>%
       
     YearTable$"Gigs per Week" <- replace(YearTable$"Gigs per Week", nrow(YearTable), round(CurrentGpW,2))
     
-    saveRDS(YearTable, file = "Data/YearTableRDS.rds")
+    saveRDS(YearTable, file = "data/YearTableRDS.rds")
     
     

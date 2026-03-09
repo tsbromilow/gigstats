@@ -4,7 +4,6 @@ library(shiny)
 library(bslib)
 library(shinyWidgets)
 library(ggplot2)
-#library(tidyverse)
 library(DT)
 library(ggthemes)
 library(rsconnect)
@@ -20,8 +19,8 @@ library(shinyjs)
 options(shiny.fullstacktrace = TRUE)
 options(sass.cache=FALSE)
 
-source("theme.R")
-source("calcs.R")
+source("scripts/theme.R")
+source("scripts/calcs.R")
 
 
 source("ui.R")

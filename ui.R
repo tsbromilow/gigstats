@@ -158,17 +158,8 @@ ui <- page_navbar(
           ),
           
           value_box(
-            title = tags$div(
-              style = "font-size: 14px; line-height: 1.2; text-align: center;font-weight:400",
-              HTML(
-                paste0("Longest time gaps in seeing an artist"))),
-            value = tags$div(
-              style = "font-size: 16px; line-height: 1.1; text-align: center;font-weight:700",
-              HTML(
-                paste0(
-                  #seq_along(longesttime_artist), ". ",
-                  longesttime_artist, " (", longesttime_time, " years)",
-                  collapse = "<br>"))),
+            title = paste0("Longest time gap in seeing an artist"),
+            value = paste0(longesttime_time, " years - ",longesttime_artist),
             theme = value_box_theme(bg = "#c0c0c0", fg = "#2A2F3A")
           )
           
@@ -356,21 +347,21 @@ ui <- page_navbar(
         style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
         
         layout_columns(
-          col_widths = c(4, 3, 5), height = 80,
+          col_widths = c(3, 6, 3), height = 80,
           value_box(
-            title = "Most common venue",
-            value = "The Brudenell",
+            title = "Mean ticket price",
+            value = paste0("£",avplotprice),
             theme = value_box_theme(bg = "#a0dee8", fg = "#2A2F3A")),
           
           value_box(
-            title = "Unique venues",
-            value = uniquevenue,
+            title = "Most expensive single gig",
+            value = paste0(max_price_name," for £",max_price_money),
             theme = value_box_theme(bg = "#605ca8", fg = "#ffffff")
           ),
           
           value_box(
-            title = "Most venues in one city",
-            value = paste(venue_most_city,"-",venue_most_number," venues"),
+            title = "Number of free gigs",
+            value = paste0(free_gigs," gigs"),
             theme = value_box_theme(bg = "#c0c0c0", fg = "#2A2F3A")
           )
           
@@ -413,7 +404,6 @@ reactableOutput("yearstable")
     tagList(icon("headphones"), "Last.fm ranking"),
     layout_columns(
       col_widths = c(6, 6),
-      div(reactableOutput("lastfmtable")),
       div(
       layout_columns(height = 80,
         col_widths = c(4,4,4), 
@@ -467,8 +457,67 @@ reactableOutput("yearstable")
                          fg = "#2A2F3A"
                        )
                      )
-      )
-      )
+      ),
+      layout_columns(
+        col_widths = c(8, 4),
+        height = 340,
+        
+        # LEFT panel
+        div(
+          style = paste0(
+            "height:340px;",
+            "background:#a0dee8;",
+            "color:#2A2F3A;",
+            "border-radius:12px;",
+            "padding:16px;",
+            "box-sizing:border-box;",
+            "display:flex; flex-direction:column;",
+            "justify-content:flex-start;",   # top align
+            "align-items:flex-start;",       # left align
+            "text-align:left;"
+          ),
+          div(
+            style = "font-size:0.95rem; line-height:1; font-weight:700; margin:0;",
+            "Bands I have left to see:"
+          ),
+          div(style = "height:0.2rem;"),
+          div(
+            style = "font-size:1rem; line-height:1.5; width:100%;",
+            layout_columns(
+              col_widths = c(6, 6),
+              tags$ul(style = "margin:0; padding-left:0.9rem;", lapply(not_seen_1, tags$li)),
+              tags$ul(style = "margin:0; padding-left:0.9rem;", lapply(not_seen_2, tags$li)),
+              gap = "0.5rem"
+            )
+          )
+        ),
+        
+        # RIGHT panel
+        div(
+          style = paste0(
+            "height:340px;",
+            "background:#605ca8;",
+            "color:#ffffff;",
+            "border-radius:12px;",
+            "padding:16px;",
+            "box-sizing:border-box;",
+            "display:flex; flex-direction:column;",
+            "justify-content:flex-start;",
+            "align-items:flex-start;",
+            "text-align:left;"
+          ),
+          div(
+            style = "font-size:0.95rem; line-height:1; font-weight:700; margin:0;",
+            "Bands I have a ticket for:"
+          ),
+          div(style = "height:0.2rem;"),
+          div(
+            style = "font-size:1rem; line-height:1.5; width:100%;",
+            tags$ul(style = "margin:0; padding-left:0.9rem;", lapply(planned, tags$li))
+          )
+        )
+      )),
+      div(reactableOutput("lastfmtable"))
     )
   )
 )
