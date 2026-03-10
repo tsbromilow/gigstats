@@ -1,56 +1,5 @@
 server <- function(input, output, session) {
   
-  ArtistSubset_split <- split(ArtistSubset, ArtistSubset$Artist)
-  
-  ArtistReactable <- reactable(
-    ArtistCount,  height = 600,
-    pagination = FALSE,
-    striped = TRUE,
-    compact = TRUE,
-    defaultPageSize = 50,
-    searchable = TRUE,
-    
-    defaultColDef = colDef(
-      style       = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
-      headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.2")
-    ),
-    
-    details = function(index) {
-      # index is 1-based row index into ArtistCount
-      artist_name <- ArtistCount$Artist[index]
-      
-      # Lookup the nested rows (returns NULL if missing)
-      Artist_data <- ArtistSubset_split[[artist_name]]
-      
-      # If no rows found, show nothing (or return an empty div)
-      if (is.null(Artist_data) || nrow(Artist_data) == 0) return(NULL)
-      
-      div(
-        reactable(
-          Artist_data,
-          compact = TRUE,
-          striped = TRUE,
-          pagination = FALSE,
-          
-          defaultColDef = colDef(
-            style       = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.0"),
-            headerStyle = list(fontSize = "14px", padding = "1px 3px", lineHeight = "1.1")
-          ),
-          columns = list(
-            Price    = colDef(align = "center", minWidth  = 70, format = colFormat(currency = "GBP")),
-            Artist   = colDef(show = FALSE),
-            Venue    = colDef(align = "left", minWidth  = 150),
-            Location = colDef(align = "center"),
-            Date     = colDef(align = "center", minWidth  = 60),
-            Year     = colDef(align = "center", minWidth  = 60),
-            With     = colDef(align = "center")
-            
-          )
-        )
-      )
-    }
-  )
-  
   # Artists
   output$artisttable <- renderReactable(ArtistReactable)
   output$artistplot  <- renderPlot(ArtistPlot)
@@ -78,8 +27,8 @@ server <- function(input, output, session) {
   # Master/Future tables
   MasterTable <- MasterRDS %>% dplyr::select(-Img)
   
-  output$mastertable <- DT::renderDataTable({
-    DT::datatable(
+  output$mastertable <- renderDataTable({
+    datatable(
       MasterTable,
       rownames = FALSE,
       options = list(
@@ -96,7 +45,7 @@ server <- function(input, output, session) {
         )
       )
     ) %>%
-      DT::formatStyle(
+      formatStyle(
         columns   = names(MasterTable),
         fontSize  = "14px",
         lineHeight = '1',
@@ -104,8 +53,8 @@ server <- function(input, output, session) {
       )
   })
   
-  output$futuretable <- DT::renderDataTable({
-    DT::datatable(
+  output$futuretable <- renderDataTable({
+    datatable(
       FutureRDS,
       rownames = FALSE,
       
@@ -122,7 +71,7 @@ server <- function(input, output, session) {
         )
       )
     ) %>%
-      DT::formatStyle(
+      formatStyle(
         columns   = names(FutureRDS),
         fontSize  = "14px",
         lineHeight = '1',
@@ -132,7 +81,7 @@ server <- function(input, output, session) {
   
   # Last.fm table
   output$lastfmtable <- renderReactable({
-    reactable::reactable(
+    reactable(
       LastFM, height = 600,
       pagination = TRUE,
       defaultColDef = colDef(
@@ -140,10 +89,10 @@ server <- function(input, output, session) {
         headerStyle = list(fontSize = "16px", padding = "1px 3px", lineHeight = "1.2")
       ),
       columns = list(
-        "Rank"      = reactable::colDef(align = "left"),
-        "Artist"    = reactable::colDef(align = "center", minWidth = 300),
-        "Seen"      = reactable::colDef(align = "center"),
-        "Scrobbles" = reactable::colDef(align = "center")
+        "Rank"      = colDef(align = "left"),
+        "Artist"    = colDef(align = "center", minWidth = 300),
+        "Seen"      = colDef(align = "center"),
+        "Scrobbles" = colDef(align = "center")
       ),
       striped = TRUE, compact = TRUE, defaultPageSize = 100, minRows = 1, searchable = TRUE
     )
@@ -152,10 +101,8 @@ server <- function(input, output, session) {
 
   
   # Setlists
-  
-  
-  output$table <- DT::renderDT({
-    DT::datatable(
+  output$table <- renderDT({
+    datatable(
       dat,
       selection = list(mode = "single", target = "row", selected = 1),
       rownames = FALSE,
@@ -172,7 +119,7 @@ server <- function(input, output, session) {
         autowidth  = TRUE,
 
         
-        initComplete = DT::JS("
+        initComplete = JS("
         function(settings, json) {
           var $cont = $(this.api().table().container());
           
@@ -196,7 +143,7 @@ server <- function(input, output, session) {
       ")
       )
     ) %>%
-      DT::formatStyle(
+      formatStyle(
         columns   = names(dat),
         fontSize  = "14px",
         lineHeight = '1',

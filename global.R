@@ -1,5 +1,4 @@
-
-# -------------------- Libraries --------------------
+# Libraries
 library(shiny)
 library(bslib)
 library(shinyWidgets)
@@ -16,15 +15,15 @@ library(scales)
 library(reactable)
 library(shinyjs)
 
+# Set options
 options(shiny.fullstacktrace = TRUE)
 options(sass.cache=FALSE)
 
+# Source necessary files
 source("scripts/theme.R")
 source("scripts/calcs.R")
-
-
 source("ui.R")
 source("server.R")
 
-# -------------------- Run app ----------------------
+# Run app
 shinyApp(ui = ui, server = server)

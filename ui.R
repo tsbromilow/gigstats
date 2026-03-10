@@ -2,17 +2,13 @@ ui <- page_navbar(
   title = "Tom's Gig Statistics",
   theme = app_theme,
   
-  # ---------------- Home ----------------
   nav_panel(
     tagList(icon("home"), "Home"),
     
-    # Two columns: LEFT = stacked value-box rows; RIGHT = map
     layout_columns(
       col_widths = c(6, 6),
       
-      # ---------- LEFT COLUMN: your 4 rows (unchanged content & heights) ----------
       div(
-        # --- Row 1: widths 2, 6, 4 ---
         layout_columns(
           col_widths = c(2, 6, 4), height = 80,
           value_box(
@@ -41,7 +37,6 @@ ui <- page_navbar(
           )
         ),
         
-        # --- Row 2: widths 8, 4 ---
         layout_columns(
           col_widths = c(8, 4), height = 80, row_heights = "auto",
           value_box(
@@ -62,7 +57,6 @@ ui <- page_navbar(
           )
         ),
         
-        # --- Row 3: widths 8, 4 ---
         layout_columns(
           col_widths = c(8, 4), height = 80,
           value_box(
@@ -83,7 +77,6 @@ ui <- page_navbar(
           )
         ),
         
-        # --- Row 4: widths 5, 3, 4 ---
         layout_columns(
           col_widths = c(5, 3, 4), height = 80,
           value_box(
@@ -113,7 +106,6 @@ ui <- page_navbar(
         )
       ),
       
-      # ---------- RIGHT COLUMN: Map only (no blank spacer) ----------
       div(
         card(
           
@@ -139,10 +131,10 @@ ui <- page_navbar(
     
     layout_columns(
       col_widths = c(6, 6),
-      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      style = "align-items: stretch; column-gap: 1rem;",  
       
       div(
-        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        style = "height: 100%; display: flex; flex-direction: column;",  
         
         layout_columns(
           col_widths = c(3, 3, 6), height = 80,
@@ -167,7 +159,7 @@ ui <- page_navbar(
         ),
         
         div(
-          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          style = "flex: 1 1 auto; min-height: 0;",  
           plotOutput("artistplot", height = "100%")
         )
       ),
@@ -184,10 +176,10 @@ ui <- page_navbar(
     tagList(icon("map-marker"), "Locations"),
     layout_columns(
       col_widths = c(6, 6),
-      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      style = "align-items: stretch; column-gap: 1rem;",  
       
       div(
-        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        style = "height: 100%; display: flex; flex-direction: column;", 
         
         layout_columns(
           col_widths = c(3, 3, 6), height = 80,
@@ -212,7 +204,7 @@ ui <- page_navbar(
         ),
         
         div(
-          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          style = "flex: 1 1 auto; min-height: 0;", 
           plotOutput("cityplot", height = "100%")
         )
       ),
@@ -228,10 +220,10 @@ ui <- page_navbar(
     tagList(icon("building"), "Venues"),
     layout_columns(
       col_widths = c(6, 6),
-      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      style = "align-items: stretch; column-gap: 1rem;",  
       
       div(
-        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        style = "height: 100%; display: flex; flex-direction: column;",  
         
         layout_columns(
           col_widths = c(4, 3, 5), height = 80,
@@ -256,7 +248,7 @@ ui <- page_navbar(
         ),
         
         div(
-          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          style = "flex: 1 1 auto; min-height: 0;",  
           plotOutput("venueplot", height = "100%")
         )
       ),
@@ -272,10 +264,10 @@ ui <- page_navbar(
     tagList(icon("user"), "Friends"),
     layout_columns(
       col_widths = c(6, 6),
-      style = "align-items: stretch; column-gap: 1rem;",  # stretch row to tallest col + normal gap
+      style = "align-items: stretch; column-gap: 1rem;",
       
       div(
-        style = "height: 100%; display: flex; flex-direction: column;",  # make left column stretch + stack
+        style = "height: 100%; display: flex; flex-direction: column;",  
         
         layout_columns(
           col_widths = c(4, 4, 4), height = 80,
@@ -301,7 +293,7 @@ ui <- page_navbar(
         ),
         
         div(
-          style = "flex: 1 1 auto; min-height: 0;",  # key for flex children to shrink/grow properly
+          style = "flex: 1 1 auto; min-height: 0;", 
           plotOutput("friendplot", height = "100%")
         ))
       ,
@@ -462,7 +454,6 @@ reactableOutput("yearstable")
         col_widths = c(8, 4),
         height = 340,
         
-        # LEFT panel
         div(
           style = paste0(
             "height:340px;",
@@ -492,7 +483,6 @@ reactableOutput("yearstable")
           )
         ),
         
-        # RIGHT panel
         div(
           style = paste0(
             "height:340px;",
