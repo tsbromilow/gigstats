@@ -118,7 +118,7 @@ div.dataTables_filter label {
   #citytable,   #citytable   .reactable, #citytable   .ReactTable,
   #venuetable,  #venuetable  .reactable, #venuetable  .ReactTable,
   #friendtable, #friendtable .reactable, #friendtable .ReactTable,
-  #coststable,  #coststable  .reactable, #coststable  .ReactTable {
+  #costtable,  #costtable  .reactable, #costtable  .ReactTable {
     height: 500px !important;
   }
 

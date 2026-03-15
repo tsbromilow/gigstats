@@ -18,7 +18,7 @@ server <- function(input, output, session) {
   output$friendtable <- renderReactable({ FriendsReactable })
   
   # Costs
-  output$coststable  <- renderReactable({ CostReactable })
+  output$costtable  <- renderReactable({ CostReactable })
   output$costplot    <- renderPlot({CostPlot})
   
   # Years
@@ -101,7 +101,7 @@ server <- function(input, output, session) {
 
   
   # Setlists
-  output$table <- renderDT({
+  output$setlisttable <- renderDT({
     datatable(
       dat,
       selection = list(mode = "single", target = "row", selected = 1),
@@ -111,13 +111,13 @@ server <- function(input, output, session) {
         info = FALSE,
         scrollY = "500px",
         scrollCollapse = TRUE,
-          columnDefs = list(
-            list(className = "dt-left",   targets = c(0)),  # e.g. first two columns
-            list(className = "dt-center", targets = c(1:4)),
-            list(visible = FALSE, targets = 5)
-          ),
+        columnDefs = list(
+          list(className = "dt-left",   targets = c(0)),  # e.g. first two columns
+          list(className = "dt-center", targets = c(1:4)),
+          list(visible = FALSE, targets = 5)
+        ),
         autowidth  = TRUE,
-
+        
         
         initComplete = JS("
         function(settings, json) {
@@ -147,15 +147,15 @@ server <- function(input, output, session) {
         columns   = names(dat),
         fontSize  = "14px",
         lineHeight = '1',
-
+        
       )
   })
   
   
   
-  df <- reactive({ dat[input[["table_rows_selected"]], ] })
+  df <- reactive({ dat[input[["setlisttable_rows_selected"]], ] })
   
-  output$img <- renderUI({
+  output$setlist_img <- renderUI({
     req(nrow(df()) > 0)
     imgfr <- lapply(df()$Img, function(file) {
       tags$div(
@@ -165,6 +165,24 @@ server <- function(input, output, session) {
     })
     do.call(tagList, imgfr)
   })
+  
+  
+  outputOptions(output, "artistplot", suspendWhenHidden = FALSE)
+  outputOptions(output, "artisttable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "cityplot", suspendWhenHidden = FALSE)
+  outputOptions(output, "citytable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "citymapplot", suspendWhenHidden = FALSE)
+  outputOptions(output, "venueplot", suspendWhenHidden = FALSE)
+  outputOptions(output, "venuetable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "friendplot", suspendWhenHidden = FALSE)
+  outputOptions(output, "friendtable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "costplot", suspendWhenHidden = FALSE)
+  outputOptions(output, "costtable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "yearstable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "lastfmtable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "setlisttable",   suspendWhenHidden = FALSE)
+  outputOptions(output, "setlist_img",   suspendWhenHidden = FALSE)
+  
   
 
 }

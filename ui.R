@@ -321,10 +321,10 @@ ui <- page_navbar(
         ",
           "Click on a table row to view that setlist"
         ),
-        uiOutput("img")
+        uiOutput("setlist_img")
       ),
       
-      DTOutput("table")
+      DTOutput("setlisttable")
     )
   ),
   
@@ -368,7 +368,7 @@ ui <- page_navbar(
       
       div(
         style = "height: 100%;",
-        reactableOutput("coststable")
+        reactableOutput("costtable")
       )
     )),
   
