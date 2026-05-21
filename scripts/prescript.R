@@ -153,6 +153,10 @@ Master.venue <- Master %>%
     Venue == "Brudenell Social Club (Main)",
     "Brudenell Social Club",
     Venue
+  )) %>%  mutate(Venue = ifelse(
+    Venue == "Brudenell Social Club (Car Park)",
+    "Brudenell Social Club",
+    Venue
   )) %>%
   mutate(Venue = ifelse(
     Venue == "Brudenell Social Club (Community)",
