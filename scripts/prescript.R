@@ -263,17 +263,14 @@ lastfm <- lastfm  %>%
   mutate(Artist = ifelse(Artist == "Frank Carter & The Rattlesnakes", "Frank Carter", Artist)) %>%
   mutate(Artist = ifelse(Artist == "Esmé Patterson", "Esme Patterson", Artist)) %>%
   mutate(Artist = ifelse(Artist == "Touché Amoré", "Touche Amore", Artist)) %>%
-  mutate(Artist = ifelse(
-    Artist == "Aaron West and The Roaring Twenties",
-    "Aaron West",
-    Artist
-  )) %>%
+  mutate(Artist = ifelse(Artist == "Aaron West and The Roaring Twenties", "Aaron West", Artist)) %>%
   mutate(Artist = ifelse(Artist == "Felix Hagan & The Family", "Felix Hagan", Artist)) %>%
   mutate(Artist = ifelse(Artist == "I DONT KNOW HOW BUT THEY FOUND ME", "iDKHOW", Artist)) %>%
   mutate(Artist = ifelse(Artist == "WARGASM (UK)", "Wargasm", Artist)) %>%
   mutate(Artist = ifelse(Artist == "Slaves", "Soft Play", Artist)) %>%
   mutate(Artist = ifelse(Artist == "SeeYouSpaceCowboy...", "SeeYouSpaceCowboy", Artist)) %>%
   mutate(Artist = ifelse(Artist == "'68", "68", Artist)) %>%
+  mutate(Artist = ifelse(Artist == "dead pioneers", "Dead Pioneers", Artist)) %>%
   
   left_join(finalseen) %>%
   mutate(Seen = ifelse(is.na(Seen), "No", Seen)) %>%
