@@ -1,11 +1,18 @@
 ﻿Artist,Venue,Location,Date,Year,Price,With,Notes,Setlist,Img,HL,VHL,W
+Mini Disc,Oporto,Leeds,22-Oct,2026,,Katrina,Support,,,0,0,0
+Gia Ford,Oporto,Leeds,22-Oct,2026,14.81,Katrina,,,,1,1,1
+Cateyes,Key Club,Leeds,20-Oct,2026,,Katrina,Support,,,0,0,0
+The Sound of Modesty,Key Club,Leeds,20-Oct,2026,,Katrina,Support,,,0,0,0
+Ómoia,Key Club,Leeds,20-Oct,2026,14.25,Katrina,,,,1,1,1
+Sin Clair,Howard Assembly Room,Leeds,15-Oct,2026,,Katrina,Support,,,0,0,0
+Arab Strap,Howard Assembly Room,Leeds,15-Oct,2026,30.2,Katrina,,,,1,1,1
+Cake,Roundhouse,London,01-Oct,2026,53.78,Katrina,,,,1,1,1
 Glasshaven,Gorilla,Manchester,26-Sep,2026,,Katrina,Support,,,0,0,0
-Hailaker,Gorilla,Manchester,26-Sep,2026,,Katrina,Support,,,0,0,0
-Exploring Birdsong,Gorilla,Manchester,26-Sep,2026,23.88,Katrina,,,,1,1,1
+Exploring Birdsong,Gorilla,Manchester,26-Sep,2026,23.88,Katrina,,Yes,eb260926.jpg,1,1,1
 "Overhead, The Albatross",The Grove,Newcastle,20-Sep,2026,,Katrina,Support,,,0,0,0
 The Dear Hunter,The Grove,Newcastle,20-Sep,2026,20.3,Katrina,,,,1,1,1
-"Overhead, The Albatross",Night and Day Cafe,Manchester,18-Sep,2026,,Katrina,Support,Yes,dh180926.jpg,0,0,0
-The Dear Hunter,Night and Day Cafe,Manchester,18-Sep,2026,20.2,Katrina,,,,1,1,1
+"Overhead, The Albatross",Night and Day Cafe,Manchester,18-Sep,2026,,Katrina,Support,,,0,0,0
+The Dear Hunter,Night and Day Cafe,Manchester,18-Sep,2026,20.2,Katrina,,Yes,dh180926.jpg,1,1,1
 Zvilnik,The Ferret,Preston,17-Sep,2026,,Katrina,Support,,,0,0,0
 Peer Pleasure,The Ferret,Preston,17-Sep,2026,,Katrina,Support,,,0,0,0
 Erotic Secrets of Pompeii,The Ferret,Preston,17-Sep,2026,14.3,Katrina,,Yes,es170926.jpg,1,1,1
@@ -514,7 +521,7 @@ Greywind,Camden Underworld,London,01-Feb,2025,,Solo,Support,,,0,0,0
 Beauty School,Camden Underworld,London,01-Feb,2025,,Solo,Support,,,0,0,0
 The Wonder Years,Camden Underworld,London,01-Feb,2025,36.85,Solo,,,,1,1,1
 Leprous,Kentish Town Forum,London,31-Jan,2025,32.3,Solo,,,,1,1,1
-Hang Lilton,Brudenell Social Club (Main),Leeds,27-Jan,2025,,Katrina,Support,,,0,0,0
+Hang Linton,Brudenell Social Club (Main),Leeds,27-Jan,2025,,Katrina,Support,,,0,0,0
 Gia Ford,Brudenell Social Club (Main),Leeds,27-Jan,2025,,Katrina,Support,,,0,0,0
 Big Special,Brudenell Social Club (Main),Leeds,27-Jan,2025,11.5,Katrina,,Yes,bs280125.jpg,1,1,1
 Greyhaven,The Grove,Newcastle,22-Jan,2025,,Katrina,Support,,,0,0,0
